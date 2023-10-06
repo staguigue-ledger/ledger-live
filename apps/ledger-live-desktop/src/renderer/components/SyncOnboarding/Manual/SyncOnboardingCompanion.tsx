@@ -37,10 +37,10 @@ import { LockedDeviceError } from "@ledgerhq/errors";
 
 const READY_REDIRECT_DELAY_MS = 2500;
 const POLLING_PERIOD_MS = 1000;
-const DESYNC_TIMEOUT_MS = 60000;
+const DESYNC_TIMEOUT_MS = 120000;
 const LONG_DESYNC_TIMEOUT_MS = 100000;
 const DESYNC_OVERLAY_DELAY_MS = 1000;
-const LONG_DESYNC_OVERLAY_DELAY_MS = 30000;
+const LONG_DESYNC_OVERLAY_DELAY_MS = 60000;
 
 enum StepKey {
   Paired = 0,

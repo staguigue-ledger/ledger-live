@@ -7,7 +7,7 @@ import { retry } from "@ledgerhq/live-common/promise";
 import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
 import TransportHttp from "@ledgerhq/hw-transport-http";
 import { DisconnectedDevice } from "@ledgerhq/errors";
-import { TraceContext, listen as listenLogs } from "@ledgerhq/logs";
+import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { ForwardToMainLogger } from "./logger";
 
 /* eslint-disable guard-for-in */
@@ -30,6 +30,7 @@ setErrorRemapping(e => {
   }
   return throwError(() => e);
 });
+
 if (getEnv("DEVICE_PROXY_URL")) {
   const Tr = TransportHttp(getEnv("DEVICE_PROXY_URL").split("|"));
   registerTransportModule({
@@ -41,14 +42,24 @@ if (getEnv("DEVICE_PROXY_URL")) {
   registerTransportModule({
     id: "hid",
     open: (id: string, timeoutMs?: number, context?: TraceContext) =>
-      retry(() => TransportNodeHidSingleton.open(id, timeoutMs, context), {
-        maxRetry: 4,
-      }),
-    disconnect: () => Promise.resolve(),
+      // TODO: remove retry here or on renderer IPC side ?
+      // retry(() => TransportNodeHidSingleton.open(id, timeoutMs, context), {
+      //   maxRetry: 4,
+      //   context: JSON.stringify(context),
+      // }),
+      TransportNodeHidSingleton.open(id, timeoutMs, context),
+    disconnect: () => {
+      trace({ type: "hid-verbose", message: "🦖 register module disconnect called" });
+      return Promise.resolve();
+    },
     setAllowAutoDisconnect: async (transport, _, allow) =>
       (transport as TransportNodeHidSingleton).setAllowAutoDisconnect(allow),
   });
 }
+
+/**
+ * Cleans up all transports
+ */
 export function unsubscribeSetup() {
   TransportNodeHidSingleton.disconnect();
 }

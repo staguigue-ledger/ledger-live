@@ -12,6 +12,7 @@ import {
   LockedDeviceError,
   UnexpectedBootloader,
   ExchangeTimeoutError,
+  DisconnectedDeviceDuringOperation,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
@@ -36,7 +37,7 @@ export type GetOnboardingStatePollingArgs = {
  * @param pollingPeriodMs The period in ms after which the device onboarding state is fetched again
  * @param fetchingTimeoutMs The time to wait while fetching for the device onboarding state before throwing an error, in ms
  *  Depending on the transport implementation, an "abort timeout" on command executed with the transport might exist
- *  TODO: just use the abortTimeout ? Or set it to fetching - 100 for ex ? And Set by default fetching 
+ *  TODO: just use the abortTimeout ? Or set it to fetching - 100 for ex ? And Set by default fetching
  * @returns An Observable that polls the device onboarding state and pushes an object containing:
  * - onboardingState: the device state during the onboarding
  * - allowedError: any error that is allowed and does not stop the polling
@@ -137,7 +138,8 @@ export const isAllowedOnboardingStatePollingError = (error: unknown): boolean =>
       error instanceof TransportRaceCondition ||
       error instanceof TransportStatusError ||
       // A locked device is handled as an allowed error
-      error instanceof LockedDeviceError)
+      error instanceof LockedDeviceError ||
+      error instanceof DisconnectedDeviceDuringOperation)
   ) {
     return true;
   }
