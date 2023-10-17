@@ -242,3 +242,5 @@ npm i @ledgerhq/live-common@nightly
 ## License
 
 Please check each project `LICENSE` file, most of them are under the `MIT` license.
+
+fake
