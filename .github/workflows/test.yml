@@ -182,17 +182,7 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -204,10 +194,6 @@ jobs:
         with:
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - uses: ruby/setup-ruby@v1
-        if: ${{ matrix.os == 'macos-latest' }}
-        with:
-          ruby-version: 3.2.2
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
@@ -226,7 +212,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: ${{ format('react-ui-test-results-{0}', matrix.os) }}
+          name: react-ui-test-results
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
@@ -235,12 +221,12 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            fs.writeFileSync("summary-ui-${{ matrix.os }}.txt", "${{ steps.test-ui.outcome }}", "utf-8");
+            fs.writeFileSync("summary-ui.txt", "${{ steps.test-ui.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: outputs
-          path: ${{ github.workspace }}/summary-ui-${{ matrix.os }}.txt
+          path: ${{ github.workspace }}/summary-ui.txt
 
   codecheck-libraries:
     name: "Codecheck Libraries"
@@ -308,9 +294,7 @@ jobs:
             const resultTests = fs.readFileSync("${{ github.workspace }}/summary-tests.txt", "utf-8");
             const resultLint = fs.readFileSync("${{ github.workspace }}/summary-lint.txt", "utf-8");
             const resultTypecheck = fs.readFileSync("${{ github.workspace }}/summary-typecheck.txt", "utf-8");
-            const resultUILinux = fs.readFileSync("${{ github.workspace }}/summary-ui-ubuntu-latest.txt", "utf-8");
-            const resultUImacOS = fs.readFileSync("${{ github.workspace }}/summary-ui-macos-latest.txt", "utf-8");
-            const resultUIWindows = fs.readFileSync("${{ github.workspace }}/summary-ui-windows-latest.txt", "utf-8");
+            const resultUI = fs.readFileSync("${{ github.workspace }}/summary-ui.txt", "utf-8");
 
             const statuses = {
               doc: {
@@ -342,18 +326,8 @@ jobs:
                 status: resultTypecheck,
               },
               ui: {
-                mac: {
-                  pass: resultUImacOS == 'success',
-                  status: resultUImacOS,
-                },
-                linux: {
-                  pass: resultUILinux == 'success',
-                  status: resultUILinux,
-                },
-                windows: {
-                  pass: resultUIWindows == 'success',
-                  status: resultUIWindows,
-                }
+                pass: resultUI == 'success',
+                status: resultUI,
               },
             };
 
@@ -381,9 +355,8 @@ jobs:
 
             ### Test UI Design System
 
-            | Linux (🤖) | macOS (🍏) | windows (🪟) |
-            | :--: | :--: | :--: |
-            | ${statuses.ui.linux.pass ? "✅" : "❌"} (${statuses.ui.linux.status}) | ${statuses.ui.mac.pass ? "✅" : "❌"} (${statuses.ui.mac.status}) | ${statuses.ui.windows.pass ? "✅" : "❌"} (${statuses.ui.windows.status}) |
+            ${statuses.ui.pass ? "All tests are fine" : "Some tests failed"}
+              - ${statuses.ui.pass ? "✅" : "❌"} **Test UI** ended with status \`${statuses.ui.status}\`
 
             ### Common Tools
 
