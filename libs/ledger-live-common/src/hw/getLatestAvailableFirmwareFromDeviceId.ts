@@ -5,6 +5,7 @@ import manager from "../manager";
 import { retryWhileErrors, withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import { LockedDeviceError } from "@ledgerhq/errors";
+import fetchLatestFirmwareUseCase from "../device/use-cases/fetchLatestFirmwareUseCase";
 
 export type GetLatestAvailableFirmwareFromDeviceIdArgs = {
   deviceId: DeviceId;
@@ -49,7 +50,7 @@ export const getLatestAvailableFirmwareFromDeviceId = ({
             status: "started",
           });
 
-          return forkJoin([of(deviceInfo), from(manager.getLatestFirmwareForDevice(deviceInfo))]);
+          return forkJoin([of(deviceInfo), from(fetchLatestFirmwareUseCase(deviceInfo))]);
         }),
       ),
     ) // Needs to retry with withDevice

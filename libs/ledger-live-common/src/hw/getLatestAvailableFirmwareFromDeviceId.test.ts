@@ -1,7 +1,6 @@
 import { from, Observable, of, timer } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import getDeviceInfo from "./getDeviceInfo";
-import manager from "../manager";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import {
   getLatestAvailableFirmwareFromDeviceId,
@@ -10,6 +9,7 @@ import {
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { aDeviceInfoBuilder } from "../mock/fixtures/aDeviceInfo";
 import { aLatestFirmwareContextBuilder } from "../mock/fixtures/aLatestFirmwareContext";
+import fetchLatestFirmwareUseCase from "../device/use-cases/fetchLatestFirmwareUseCase";
 
 jest.useFakeTimers();
 // Needs to mock the timer from rxjs used in retryWhileErrors
@@ -36,7 +36,7 @@ jest.mock("./deviceAccess", () => {
 });
 
 jest.mock("../manager");
-const mockedGetLatestFirmwareForDevice = jest.mocked(manager.getLatestFirmwareForDevice);
+const mockedGetLatestFirmwareForDevice = jest.mocked(fetchLatestFirmwareUseCase);
 
 jest.mock("./getDeviceInfo");
 const mockedGetDeviceInfo = jest.mocked(getDeviceInfo);
