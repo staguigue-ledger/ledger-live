@@ -71,6 +71,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const mock = useEnv("MOCK");
   const injective = useFeature("currencyInjective");
   const neonEvm = useFeature("currencyNeonEvm");
+  const lukso = useFeature("currencyLukso");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -111,6 +112,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       klaytn,
       injective,
       neon_evm: neonEvm,
+      lukso,
     }),
     [
       axelar,
@@ -150,6 +152,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       klaytn,
       injective,
       neonEvm,
+      lukso,
     ],
   );
 

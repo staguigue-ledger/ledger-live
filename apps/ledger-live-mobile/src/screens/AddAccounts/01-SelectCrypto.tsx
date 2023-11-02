@@ -92,6 +92,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const mock = useEnv("MOCK");
   const injective = useFeature("currencyInjective");
   const neonEvm = useFeature("currencyNeonEvm");
+  const lukso = useFeature("currencyLukso");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -132,6 +133,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       klaytn,
       injective,
       neon_evm: neonEvm,
+      lukso,
     }),
     [
       axelar,
@@ -171,6 +173,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       klaytn,
       injective,
       neonEvm,
+      lukso,
     ],
   );
 
