@@ -159,7 +159,8 @@ export type CryptoCurrencyId =
   | "polygon_zk_evm_testnet"
   | "base"
   | "base_goerli"
-  | "neon_evm";
+  | "neon_evm"
+  | "lukso";
 
 export type LedgerExplorerId =
   | "btc"
