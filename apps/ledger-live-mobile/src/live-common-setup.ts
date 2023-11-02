@@ -118,6 +118,7 @@ setSupportedCurrencies([
   "coreum",
   "injective",
   "neon_evm",
+  "lukso",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

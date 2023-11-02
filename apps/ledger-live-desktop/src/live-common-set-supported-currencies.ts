@@ -85,4 +85,5 @@ setSupportedCurrencies([
   "coreum",
   "injective",
   "neon_evm",
+  "lukso",
 ]);
