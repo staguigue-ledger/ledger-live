@@ -16,7 +16,7 @@ module.exports = {
     retries: 0,
   },
   logger: {
-    level: process.env.DEBUG_DETOX ? "trace" : "info",
+    level: "trace",
   },
   behavior: {
     // NOTE: https://github.com/wix/Detox/blob/master/docs/APIRef.Configuration.md#behavior-configuration
@@ -25,9 +25,6 @@ module.exports = {
       exposeGlobals: false,
     },
     launchApp: "auto",
-    cleanup: {
-      shutdownDevice: false,
-    },
   },
   apps: {
     "ios.debug": {
